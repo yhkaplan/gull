@@ -73,44 +73,48 @@ func main() {
 						eventType, title, link string
 					)
 
-					title = *event.Type     // TODO
-					eventType = *event.Type // TODO
-					switch title {
+					eventType = *event.Type
+					switch eventType {
 					case "IssuesEvent":
 						issuesEvent, err := github.GetIssuesEventFromRaw(event)
 						if err != nil {
 							return err
 						}
 						link = *issuesEvent.Issue.HTMLURL
+						title = *issuesEvent.Issue.Title
 					case "PullRequestEvent":
 						pullRequestEvent, err := github.GetPullRequestEventFromRaw(event)
 						if err != nil {
 							return err
 						}
 						link = *pullRequestEvent.PullRequest.HTMLURL
+						title = *pullRequestEvent.PullRequest.Title
 					case "PullRequestReviewCommentEvent":
 						pullRequestReviewCommentEvent, err := github.GetPullRequestReviewCommentEventFromRaw(event)
 						if err != nil {
 							return err
 						}
 						link = *pullRequestReviewCommentEvent.Comment.HTMLURL
+						title = *pullRequestReviewCommentEvent.PullRequest.Title + " (comment)"
 					case "IssueCommentEvent":
 						issueCommentEvent, err := github.GetIssueCommentEventFromRaw(event)
 						if err != nil {
 							return err
 						}
 						link = *issueCommentEvent.Comment.HTMLURL
+						title = *issueCommentEvent.Issue.Title + " (comment)"
 					case "CommitCommentEvent":
 						commitCommentEvent, err := github.GetCommitCommentEventFromRaw(event)
 						if err != nil {
 							return err
 						}
 						link = *commitCommentEvent.Comment.HTMLURL
+						title = *commitCommentEvent.Repo.HTMLURL + " (comment)"
 					default:
 						return errors.New("invalid event type")
 					}
 
-					fmt.Printf("- [%s](%s: %s)\n", eventType, link, title)
+					fmt.Printf("- [%s](%s): %s\n", title, link, eventType)
 				}
 
 				return nil
