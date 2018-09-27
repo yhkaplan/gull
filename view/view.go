@@ -27,18 +27,32 @@ func (v *View) size() (int, int) {
 
 func (v *View) layout(g *gocui.Gui) error {
 	maxX, maxY := v.size()
+	rightOffset := 0
 
-	v.setCategoryPane(g)
-	v.setListPane(g)
+	err := v.setCategoryView(g)
+	if err != nil {
+		return err
+	}
+	err = v.setListView(g)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // Setup left side category window
-func (v *View) setCategoryPane(g *gocui.Gui) error {
-	if
+func (mainView *View) setCategoryView(g *gocui.Gui) error {
+	if categoryView, err := g.SetView("Category", 0, 0, maxX/2, maxY); err != nil {
+		if err != gocui.ErrUnknownView {
+			return err
+		}
+		mainView.categoryView
+	}
 }
 
 // Setup right side list window
-func (v *View) setListPane(g *gocui.Gui) error {
+func (v *View) setListView(g *gocui.Gui) error {
 
 }
 
@@ -50,20 +64,18 @@ func (v *View) Run() {
 	defer g.Close()
 	v.g = g
 
-	g.defaultSettings()
+	defaultSettings(g)
 	// Set manager and bindings
 	g.SetManagerFunc(v.layout)
 
 	if err := g.MainLoop(); err != nil && err != gocui.ErrQuit {
-		return err
+		log.Fatalf("MainLoop: %v", err)
 	}
 
-	g.SetManager(gocui.Manager)
-
-	return nil
+	g.SetManagerFunc(v.layout)
 }
 
-func (g *gocui.Gui) defaultSettings() {
+func defaultSettings(g *gocui.Gui) {
 	g.InputEsc = true
 	g.FgColor = gocui.ColorWhite
 	g.BgColor = gocui.ColorBlack
