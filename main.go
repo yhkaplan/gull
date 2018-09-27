@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/urfave/cli"
+	"github.com/yhkaplan/gull/date"
 )
 
 func main() {
@@ -37,7 +38,17 @@ func main() {
 				},
 			},
 			Action: func(c *cli.Context) error {
-				fmt.Printf("Show activities: from %v, to %v\n", c.String("from"), c.String("to"))
+				from, err := date.Parse(c.String("from"))
+				if err != nil {
+					return err
+				}
+				to, err := date.Parse(c.String("to"))
+				if err != nil {
+					return err
+				}
+				to = date.EndOfDay(to)
+
+				fmt.Printf("Show activities: from %v, to %v\n", from, to)
 				return nil
 			},
 		},
@@ -57,7 +68,17 @@ func main() {
 				},
 			},
 			Action: func(c *cli.Context) error {
-				fmt.Printf("Visualizes activities: from %v, to %v\n", c.String("from"), c.String("to"))
+				from, err := date.Parse(c.String("from"))
+				if err != nil {
+					return err
+				}
+				to, err := date.Parse(c.String("to"))
+				if err != nil {
+					return err
+				}
+				to = date.EndOfDay(to)
+
+				fmt.Printf("Visualizes activities: from %v, to %v\n", from, to)
 				return nil
 			},
 		},
