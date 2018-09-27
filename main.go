@@ -1,6 +1,8 @@
 package main
 
 import (
+	"context"
+	"errors"
 	"fmt"
 	"log"
 	"os"
@@ -8,6 +10,7 @@ import (
 
 	"github.com/urfave/cli"
 	"github.com/yhkaplan/gull/date"
+	"github.com/yhkaplan/gull/github"
 )
 
 func main() {
@@ -53,6 +56,63 @@ func main() {
 				to = date.EndOfDay(to)
 
 				fmt.Printf("Show activities: from %v, to %v\n", from, to)
+
+				// TODO
+				// Sample
+				client, err := github.NewClient("giraffate", os.Getenv("GITHUB_TOKEN"))
+				if err != nil {
+					return err
+				}
+
+				events, err := client.GetEventsWithGrouping(context.Background(), from, to)
+				if err != nil {
+					return err
+				}
+				for _, event := range events {
+					var (
+						eventType, title, link string
+					)
+
+					title = *event.Type     // TODO
+					eventType = *event.Type // TODO
+					switch title {
+					case "IssuesEvent":
+						issuesEvent, err := github.GetIssuesEventFromRaw(event)
+						if err != nil {
+							return err
+						}
+						link = *issuesEvent.Issue.HTMLURL
+					case "PullRequestEvent":
+						pullRequestEvent, err := github.GetPullRequestEventFromRaw(event)
+						if err != nil {
+							return err
+						}
+						link = *pullRequestEvent.PullRequest.HTMLURL
+					case "PullRequestReviewCommentEvent":
+						pullRequestReviewCommentEvent, err := github.GetPullRequestReviewCommentEventFromRaw(event)
+						if err != nil {
+							return err
+						}
+						link = *pullRequestReviewCommentEvent.Comment.HTMLURL
+					case "IssueCommentEvent":
+						issueCommentEvent, err := github.GetIssueCommentEventFromRaw(event)
+						if err != nil {
+							return err
+						}
+						link = *issueCommentEvent.Comment.HTMLURL
+					case "CommitCommentEvent":
+						commitCommentEvent, err := github.GetCommitCommentEventFromRaw(event)
+						if err != nil {
+							return err
+						}
+						link = *commitCommentEvent.Comment.HTMLURL
+					default:
+						return errors.New("invalid event type")
+					}
+
+					fmt.Printf("- [%s](%s: %s)\n", eventType, link, title)
+				}
+
 				return nil
 			},
 		},
