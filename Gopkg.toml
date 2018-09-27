@@ -24,6 +24,8 @@
 #   go-tests = true
 #   unused-packages = true
 
+# For travis CI
+required = ["github.com/golangci/golangci-lint/cmd/golangci-lint"]
 
 [prune]
   go-tests = true
