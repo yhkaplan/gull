@@ -60,5 +60,5 @@ func (c *Client) GetEventsWithGrouping(ctx context.Context) ([]*github.Event, er
 		}
 	}
 
-	return events, nil
+	return dst, nil
 }
