@@ -3,9 +3,14 @@ package github
 import (
 	"context"
 	"errors"
+	"time"
 
 	"github.com/google/go-github/github"
 	"golang.org/x/oauth2"
+)
+
+const (
+	perPage = 100
 )
 
 var gullEventTypes = []string{
@@ -43,8 +48,9 @@ func NewClient(owner, token string) (*Client, error) {
 	}, nil
 }
 
-func (c *Client) GetEventsWithGrouping(ctx context.Context) ([]*github.Event, error) {
-	events, _, err := c.Activity.ListEventsPerformedByUser(ctx, c.owner, true, nil)
+func (c *Client) GetEventsWithGrouping(ctx context.Context, from, to time.Time) ([]*github.Event, error) {
+	opt := &github.ListOptions{PerPage: perPage}
+	events, _, err := c.Activity.ListEventsPerformedByUser(ctx, c.owner, true, opt)
 	if err != nil {
 		return nil, err
 	}
@@ -53,9 +59,9 @@ func (c *Client) GetEventsWithGrouping(ctx context.Context) ([]*github.Event, er
 	for _, event := range events {
 		for _, gullEventType := range gullEventTypes {
 			if *event.Type == gullEventType {
-				// TODO
-				// filter from-to time
-				dst = append(dst, event)
+				if event.CreatedAt.After(from) && event.CreatedAt.Before(to) {
+					dst = append(dst, event)
+				}
 			}
 		}
 	}
