@@ -17,46 +17,62 @@ func (manager) Layout(*gocui.Gui) error {
 }
 
 // TODO: move this elsewhere
-type View struct {
-	g *gocui.Gui
+// TODO: rename to MainView
+type GullView struct {
+	g         *gocui.Gui
+	categoryV *gocui.View
 }
 
-func (v *View) size() (int, int) {
-	return v.g.size
+// Initializes GullView
+func New() *GullView {
+	v := &GullView{}
+	return v
 }
 
-func (v *View) layout(g *gocui.Gui) error {
+// Returns window's width and height
+func (v *GullView) size() (int, int) {
+	return v.g.Size()
+}
+
+func (v *GullView) layout(g *gocui.Gui) error {
 	maxX, maxY := v.size()
-	rightOffset := 0
+	horizOffset := maxX / 2
 
-	err := v.setCategoryView(g)
+	err := v.setCategoryView(g, horizOffset, maxY)
 	if err != nil {
 		return err
 	}
-	err = v.setListView(g)
-	if err != nil {
-		return err
-	}
+	// err = v.setListView(g)
+	// if err != nil {
+	// 	return err
+	// }
 
 	return nil
 }
 
 // Setup left side category window
-func (mainView *View) setCategoryView(g *gocui.Gui) error {
-	if categoryView, err := g.SetView("Category", 0, 0, maxX/2, maxY); err != nil {
+func (v *GullView) setCategoryView(g *gocui.Gui, horizOffset int, maxY int) error {
+	if categoryV, err := g.SetView("Category", 0, 0, horizOffset, maxY); err != nil {
 		if err != gocui.ErrUnknownView {
 			return err
 		}
-		mainView.categoryView
+		categoryV.Frame = true
+		categoryV.BgColor = gocui.ColorMagenta //TODO: color here for testing
+		categoryV.FgColor = gocui.ColorCyan
+		v.categoryV = categoryV
+
+		//TODO: Add go func call to get info here
 	}
+
+	return nil
 }
 
-// Setup right side list window
-func (v *View) setListView(g *gocui.Gui) error {
+// // Setup right side list window
+// func (v *GullView) setListView(g *gocui.Gui) error {
 
-}
+// }
 
-func (v *View) Run() {
+func (v *GullView) Run() {
 	g, err := gocui.NewGui(gocui.Output256)
 	if err != nil {
 		log.Fatalf("NewGui: %v", err)
@@ -65,14 +81,12 @@ func (v *View) Run() {
 	v.g = g
 
 	defaultSettings(g)
-	// Set manager and bindings
-	g.SetManagerFunc(v.layout)
 
+	g.SetManagerFunc(v.layout)
+	//TODO: set keybindings w/ v.keybindings(g)
 	if err := g.MainLoop(); err != nil && err != gocui.ErrQuit {
 		log.Fatalf("MainLoop: %v", err)
 	}
-
-	g.SetManagerFunc(v.layout)
 }
 
 func defaultSettings(g *gocui.Gui) {
