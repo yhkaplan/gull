@@ -49,6 +49,8 @@ func NewClient(owner, token string) (*Client, error) {
 	}, nil
 }
 
+// GetEventsWithGrouping lists the events received by a user
+// and filter the events with specified event types.
 func (c *Client) GetEventsWithGrouping(ctx context.Context, from, to time.Time) ([]*github.Event, error) {
 	opt := &github.ListOptions{PerPage: perPage}
 	events, _, err := c.Activity.ListEventsPerformedByUser(ctx, c.owner, true, opt)
@@ -70,6 +72,9 @@ func (c *Client) GetEventsWithGrouping(ctx context.Context, from, to time.Time) 
 	return dst, nil
 }
 
+// GetIssuesEventFromRaw parse `RawPayload` in github.Event`
+// Ref: https://godoc.org/github.com/google/go-github/github#Event
+// Ref: https://developer.github.com/v3/activity/events/types/#issuesevent
 func GetIssuesEventFromRaw(event *github.Event) (*github.IssuesEvent, error) {
 	dst := &github.IssuesEvent{}
 	err := json.Unmarshal(event.GetRawPayload(), dst)
@@ -79,6 +84,9 @@ func GetIssuesEventFromRaw(event *github.Event) (*github.IssuesEvent, error) {
 	return dst, nil
 }
 
+// GetPullRequestEventFromRaw parse `RawPayload` in github.Event`
+// Ref: https://godoc.org/github.com/google/go-github/github#Event
+// Ref: https://developer.github.com/v3/activity/events/types/#pullrequestevent
 func GetPullRequestEventFromRaw(event *github.Event) (*github.PullRequestEvent, error) {
 	dst := &github.PullRequestEvent{}
 	err := json.Unmarshal(event.GetRawPayload(), dst)
@@ -88,6 +96,9 @@ func GetPullRequestEventFromRaw(event *github.Event) (*github.PullRequestEvent, 
 	return dst, nil
 }
 
+// GetPullRequestReviewCommentEventFromRaw parse `RawPayload` in github.Event`
+// Ref: https://godoc.org/github.com/google/go-github/github#Event
+// Ref: https://developer.github.com/v3/activity/events/types/#pullrequestreviewcommentevent
 func GetPullRequestReviewCommentEventFromRaw(event *github.Event) (*github.PullRequestReviewCommentEvent, error) {
 	dst := &github.PullRequestReviewCommentEvent{}
 	err := json.Unmarshal(event.GetRawPayload(), dst)
@@ -97,6 +108,9 @@ func GetPullRequestReviewCommentEventFromRaw(event *github.Event) (*github.PullR
 	return dst, nil
 }
 
+// GetIssueCommentEventFromRaw parse `RawPayload` in github.Event`
+// Ref: https://godoc.org/github.com/google/go-github/github#Event
+// Ref: https://developer.github.com/v3/activity/events/types/#issuecommentevent
 func GetIssueCommentEventFromRaw(event *github.Event) (*github.IssueCommentEvent, error) {
 	dst := &github.IssueCommentEvent{}
 	err := json.Unmarshal(event.GetRawPayload(), dst)
@@ -106,6 +120,9 @@ func GetIssueCommentEventFromRaw(event *github.Event) (*github.IssueCommentEvent
 	return dst, nil
 }
 
+// GetCommitCommentEventFromRaw parse `RawPayload` in github.Event`
+// Ref: https://godoc.org/github.com/google/go-github/github#Event
+// Ref: https://developer.github.com/v3/activity/events/types/#commitcommentevent
 func GetCommitCommentEventFromRaw(event *github.Event) (*github.CommitCommentEvent, error) {
 	dst := &github.CommitCommentEvent{}
 	err := json.Unmarshal(event.GetRawPayload(), dst)
