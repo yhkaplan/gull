@@ -2,6 +2,7 @@ package github
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"time"
 
@@ -66,5 +67,50 @@ func (c *Client) GetEventsWithGrouping(ctx context.Context, from, to time.Time) 
 		}
 	}
 
+	return dst, nil
+}
+
+func GetIssuesEventFromRaw(event *github.Event) (*github.IssuesEvent, error) {
+	dst := &github.IssuesEvent{}
+	err := json.Unmarshal(event.GetRawPayload(), dst)
+	if err != nil {
+		return nil, err
+	}
+	return dst, nil
+}
+
+func GetPullRequestEventFromRaw(event *github.Event) (*github.PullRequestEvent, error) {
+	dst := &github.PullRequestEvent{}
+	err := json.Unmarshal(event.GetRawPayload(), dst)
+	if err != nil {
+		return nil, err
+	}
+	return dst, nil
+}
+
+func GetPullRequestReviewCommentEventFromRaw(event *github.Event) (*github.PullRequestReviewCommentEvent, error) {
+	dst := &github.PullRequestReviewCommentEvent{}
+	err := json.Unmarshal(event.GetRawPayload(), dst)
+	if err != nil {
+		return nil, err
+	}
+	return dst, nil
+}
+
+func GetIssueCommentEventFromRaw(event *github.Event) (*github.IssueCommentEvent, error) {
+	dst := &github.IssueCommentEvent{}
+	err := json.Unmarshal(event.GetRawPayload(), dst)
+	if err != nil {
+		return nil, err
+	}
+	return dst, nil
+}
+
+func GetCommitCommentEventFromRaw(event *github.Event) (*github.CommitCommentEvent, error) {
+	dst := &github.CommitCommentEvent{}
+	err := json.Unmarshal(event.GetRawPayload(), dst)
+	if err != nil {
+		return nil, err
+	}
 	return dst, nil
 }
