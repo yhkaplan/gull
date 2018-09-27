@@ -9,7 +9,7 @@ import (
 )
 
 type Client struct {
-	owner, repo string
+	owner string
 	*github.Client
 }
 
@@ -31,7 +31,6 @@ func NewClient(owner, token string) (*Client, error) {
 
 	return &Client{
 		owner:  owner,
-		repo:   repo,
 		Client: client,
 	}, nil
 }
