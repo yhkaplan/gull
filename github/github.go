@@ -8,6 +8,14 @@ import (
 	"golang.org/x/oauth2"
 )
 
+var gullEventTypes = []string{
+	"IssuesEvent",
+	"PullRequestEvent",
+	"PullRequestReviewCommentEvent",
+	"IssueCommentEvent",
+	"CommitCommentEvent",
+}
+
 type Client struct {
 	owner string
 	*github.Client
@@ -33,4 +41,24 @@ func NewClient(owner, token string) (*Client, error) {
 		owner:  owner,
 		Client: client,
 	}, nil
+}
+
+func (c *Client) GetEventsWithGrouping(ctx context.Context) ([]*github.Event, error) {
+	events, _, err := c.Activity.ListEventsPerformedByUser(ctx, c.owner, true, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	dst := make([]*github.Event, 0, len(events))
+	for _, event := range events {
+		for _, gullEventType := range gullEventTypes {
+			if *event.Type == gullEventType {
+				// TODO
+				// filter from-to time
+				dst = append(dst, event)
+			}
+		}
+	}
+
+	return events, nil
 }
