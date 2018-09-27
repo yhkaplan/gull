@@ -28,9 +28,6 @@ type Client struct {
 }
 
 func NewClient(owner, token string) (*Client, error) {
-	if len(owner) == 0 {
-		return nil, errors.New("missing GitHub Repository owner")
-	}
 	if len(token) == 0 {
 		return nil, errors.New("missing GitHub API token")
 	}
@@ -52,8 +49,13 @@ func NewClient(owner, token string) (*Client, error) {
 // GetEventsWithGrouping lists the events received by a user
 // and filter the events with specified event types.
 func (c *Client) GetEventsWithGrouping(ctx context.Context, from, to time.Time) ([]*github.Event, error) {
+	owner, err := c.getOwner(ctx)
+	if err != nil {
+		return nil, err
+	}
+
 	opt := &github.ListOptions{PerPage: perPage}
-	events, _, err := c.Activity.ListEventsPerformedByUser(ctx, c.owner, true, opt)
+	events, _, err := c.Activity.ListEventsPerformedByUser(ctx, owner, true, opt)
 	if err != nil {
 		return nil, err
 	}
@@ -70,6 +72,17 @@ func (c *Client) GetEventsWithGrouping(ctx context.Context, from, to time.Time) 
 	}
 
 	return dst, nil
+}
+
+func (c *Client) getOwner(ctx context.Context) (string, error) {
+	if len(c.owner) == 0 {
+		user, _, err := c.Users.Get(ctx, "")
+		if err != nil {
+			return "", err
+		}
+		c.owner = user.GetLogin()
+	}
+	return c.owner, nil
 }
 
 // GetIssuesEventFromRaw parse `RawPayload` in github.Event`
