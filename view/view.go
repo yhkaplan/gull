@@ -14,8 +14,7 @@ type DashboardView struct {
 
 // Initializes DashboardView
 func New() *DashboardView {
-	v := &DashboardView{}
-	return v
+	return &DashboardView{}
 }
 
 // Returns window's width and height
