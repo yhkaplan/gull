@@ -35,8 +35,8 @@ before_script:
 # script always runs to completion (set +e). If we have linter issues AND a
 # failing test, we want to see both. Configure golangci-lint with a
 # .golangci.yml file at the top level of your repo.
-script: # TODO: make alias
+script:
   - golangci-lint run
   - (! find . -type f -name '*.go' -not -path "./vendor/*" | xargs gofmt -s -d | grep '^')
-  - find . -type f -name '*.go' -not -path "./vendor/*" | xargs go vet
-  - find . -type f -name '*.go' -not -path "./vendor/*" | xargs go test -v -race
+  - go vet ./...
+  - go test -v -race ./...
