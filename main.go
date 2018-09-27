@@ -59,7 +59,7 @@ func main() {
 
 				// TODO
 				// Sample
-				client, err := github.NewClient("giraffate", os.Getenv("GITHUB_TOKEN"))
+				client, err := github.NewClient(c.String("user"), os.Getenv("GITHUB_TOKEN"))
 				if err != nil {
 					return err
 				}
