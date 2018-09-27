@@ -17,24 +17,23 @@ func (manager) Layout(*gocui.Gui) error {
 }
 
 // TODO: move this elsewhere
-// TODO: rename to MainView
-type GullView struct {
+type DashboardView struct {
 	g         *gocui.Gui
 	categoryV *gocui.View
 }
 
 // Initializes GullView
-func New() *GullView {
-	v := &GullView{}
+func New() *DashboardView {
+	v := &DashboardView{}
 	return v
 }
 
 // Returns window's width and height
-func (v *GullView) size() (int, int) {
+func (v *DashboardView) size() (int, int) {
 	return v.g.Size()
 }
 
-func (v *GullView) layout(g *gocui.Gui) error {
+func (v *DashboardView) layout(g *gocui.Gui) error {
 	maxX, maxY := v.size()
 	horizOffset := maxX / 2
 
@@ -51,7 +50,7 @@ func (v *GullView) layout(g *gocui.Gui) error {
 }
 
 // Setup left side category window
-func (v *GullView) setCategoryView(g *gocui.Gui, horizOffset int, maxY int) error {
+func (v *DashboardView) setCategoryView(g *gocui.Gui, horizOffset int, maxY int) error {
 	if categoryV, err := g.SetView("Category", 0, 0, horizOffset, maxY); err != nil {
 		if err != gocui.ErrUnknownView {
 			return err
@@ -72,7 +71,7 @@ func (v *GullView) setCategoryView(g *gocui.Gui, horizOffset int, maxY int) erro
 
 // }
 
-func (v *GullView) Run() {
+func (v *DashboardView) Run() {
 	g, err := gocui.NewGui(gocui.Output256)
 	if err != nil {
 		log.Fatalf("NewGui: %v", err)
