@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"time"
 
 	"github.com/urfave/cli"
 )
@@ -14,6 +15,10 @@ func main() {
 	app.Usage = "GitHub activity dashboard"
 	app.Version = "0.0.1"
 
+	dateFormat := "2006-01-02"
+	today := time.Now().Format(dateFormat)
+	lastMonth := time.Now().AddDate(0, -1, 0).Format(dateFormat)
+
 	app.Commands = []cli.Command{
 		{
 			Name:  "activity",
@@ -21,10 +26,12 @@ func main() {
 			Flags: []cli.Flag{
 				cli.StringFlag{
 					Name:  "from, f",
+					Value: today,
 					Usage: "From `date`",
 				},
 				cli.StringFlag{
 					Name:  "to, t",
+					Value: today,
 					Usage: "To `date`",
 				},
 			},
@@ -39,10 +46,12 @@ func main() {
 			Flags: []cli.Flag{
 				cli.StringFlag{
 					Name:  "from, f",
+					Value: lastMonth,
 					Usage: "From `date`",
 				},
 				cli.StringFlag{
 					Name:  "to, t",
+					Value: today,
 					Usage: "To `date`",
 				},
 			},
