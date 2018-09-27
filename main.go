@@ -17,6 +17,7 @@ func main() {
 
 	dateFormat := "2006-01-02"
 	today := time.Now().Format(dateFormat)
+	lastWeek := time.Now().AddDate(0, 0, -7).Format(dateFormat)
 	lastMonth := time.Now().AddDate(0, -1, 0).Format(dateFormat)
 
 	app.Commands = []cli.Command{
@@ -26,7 +27,7 @@ func main() {
 			Flags: []cli.Flag{
 				cli.StringFlag{
 					Name:  "from, f",
-					Value: today,
+					Value: lastWeek,
 					Usage: "From `date`",
 				},
 				cli.StringFlag{
