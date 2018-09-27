@@ -36,7 +36,8 @@ before_script:
 # failing test, we want to see both. Configure golangci-lint with a
 # .golangci.yml file at the top level of your repo.
 script:
+  - GOFILES_NOVENDOR=$(find . -type f -name '*.go' -not -path "./vendor/*")
   - golangci-lint run       # run a bunch of code checkers/linters in parallel
-  - (! gofmt -s -d . | grep '^')
-  - go vet ./...
-  - go test -v -race ./...  # Run all the tests with the race detector enabled
+  - (! gofmt -s -d "$GOFILES_NOVENDOR" | grep '^')
+  - go vet "$GOFILES_NOVENDOR"
+  - go test -v -race "$GOFILES_NOVENDOR"  # Run all the tests with the race detector enabled
