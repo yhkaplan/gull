@@ -8,8 +8,8 @@ const dateFormat = "2006-01-02"
 
 var timeZone = time.Local
 
-func Parse(dateStr string) (time.Time, error) {
-	t, err := time.ParseInLocation(dateFormat, dateStr, timeZone)
+func Parse(date string) (time.Time, error) {
+	t, err := time.ParseInLocation(dateFormat, date, timeZone)
 	if err != nil {
 		return time.Time{}, err
 	}
