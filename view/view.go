@@ -1,15 +1,77 @@
 package view
 
 import (
+	"bytes"
 	"fmt"
 
-	"github.com/jroimartin/gocui"
+	"github.com/jroimartin/gocui" //TODO: alias as c instead of gocuit
+
+	"github.com/yhkaplan/gull/github"
 )
 
 type DashboardView struct {
-	g            *gocui.Gui
-	categoryView *gocui.View
-	listView     *gocui.View
+	g                *gocui.Gui
+	categoryView     *gocui.View
+	categoryList     *categoryList
+	activityView     *gocui.View
+	selectedView     *gocui.View
+	selectedRowIndex int
+}
+
+type categoryList struct {
+	title         string
+	items         []string
+	isHighlighted bool
+}
+
+// Name always equals title
+func (l *categoryList) name() string {
+	return l.title
+}
+
+func (l *categoryList) Focus(g *gocui.Gui) error {
+	l.isHighlighted = true
+	_, err := g.SetCurrentView(l.name())
+
+	return err
+}
+
+func (l *categoryList) displayItem(i int, v *gocui.View) string {
+	item := fmt.Sprint(l.items[i])
+	sp := spaces(maxWidth(v) - len(item) - 3)
+	return fmt.Sprintf(" %v%v", item, sp)
+}
+
+func maxWidth(v *gocui.View) int {
+	_, y := v.Size()
+	return y
+}
+
+func spaces(n int) string {
+	var s bytes.Buffer
+	for i := 0; i < n; i++ {
+		s.WriteString(" ")
+	}
+	return s.String()
+}
+
+func (v *DashboardView) drawCategories() error {
+	categories := v.categoryList.items
+
+	for i := 0; i < len(categories); i++ {
+		fmt.Printf("%d", i)
+		//l.Clear //TODO: to implement
+		_, err := fmt.Fprintln(v.categoryView, v.categoryList.displayItem(i, v.categoryView))
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (v *DashboardView) currentIndex() int {
+	return v.selectedRowIndex
 }
 
 // Initializes DashboardView
@@ -40,18 +102,27 @@ func (v *DashboardView) layout(g *gocui.Gui) error {
 
 // Setup left side category window
 func (v *DashboardView) setCategoryView(g *gocui.Gui, horizOffset int, maxY int) error {
-	if categoryView, err := g.SetView("Category", 0, 0, horizOffset, maxY); err != nil {
+	name := "Category"
+
+	if categoryView, err := g.SetView(name, 0, 0, horizOffset, maxY); err != nil {
 		if err != gocui.ErrUnknownView {
 			return err
 		}
 
 		categoryView.Frame = true
-		categoryView.BgColor = gocui.ColorMagenta //TODO: color here for testing
-		categoryView.FgColor = gocui.ColorCyan
+		categoryView.BgColor = gocui.ColorBlack
+		categoryView.FgColor = gocui.ColorWhite
 
 		v.categoryView = categoryView
+		v.selectedView = categoryView // Category view is always initially selected
+		v.selectedRowIndex = 0        // Top row always the default
 
-		//TODO: Add go func call to get info here
+		v.categoryList = &categoryList{
+			title: name,
+			items: github.EventTypes,
+		}
+		v.categoryList.Focus(g)
+		v.drawCategories()
 	}
 
 	return nil
@@ -69,7 +140,7 @@ func (v *DashboardView) setListView(g *gocui.Gui, horizOffset int, maxX int, max
 		listView.BgColor = gocui.ColorGreen
 		listView.FgColor = gocui.ColorYellow
 
-		v.listView = listView
+		v.activityView = listView
 
 		//TODO: Add go func call to get info here
 	}

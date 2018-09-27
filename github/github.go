@@ -14,7 +14,7 @@ const (
 	perPage = 100
 )
 
-var gullEventTypes = []string{
+var EventTypes = []string{
 	"IssuesEvent",
 	"PullRequestEvent",
 	"PullRequestReviewCommentEvent",
@@ -60,7 +60,7 @@ func (c *Client) GetEventsWithGrouping(ctx context.Context, from, to time.Time) 
 
 	dst := make([]*github.Event, 0, len(events))
 	for _, event := range events {
-		for _, gullEventType := range gullEventTypes {
+		for _, gullEventType := range EventTypes {
 			if *event.Type == gullEventType {
 				if event.CreatedAt.After(from) && event.CreatedAt.Before(to) {
 					dst = append(dst, event)
