@@ -15,9 +15,9 @@ branches:
 git:
   depth: 1
 
-# Skip the install step. Don't `go get` dependencies. Only build with the code
-# in vendor/
-install: true
+install:
+  - go get -u github.com/golang/dep/...
+  - dep ensure
 
 # Don't email me the results of the test runs.
 notifications:
