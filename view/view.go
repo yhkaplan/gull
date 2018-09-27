@@ -6,17 +6,6 @@ import (
 	"github.com/jroimartin/gocui"
 )
 
-var g gocui.Gui
-var m gocui.Manager
-
-type manager struct {
-}
-
-func (manager) Layout(*gocui.Gui) error {
-	panic("not implemented")
-}
-
-// TODO: move this elsewhere
 type DashboardView struct {
 	g            *gocui.Gui
 	categoryView *gocui.View
