@@ -36,6 +36,10 @@ func main() {
 					Value: today,
 					Usage: "To `date`",
 				},
+				cli.StringFlag{
+					Name:  "user, u",
+					Usage: "Get activities of specified `username`",
+				},
 			},
 			Action: func(c *cli.Context) error {
 				from, err := date.Parse(c.String("from"))
@@ -65,6 +69,10 @@ func main() {
 					Name:  "to, t",
 					Value: today,
 					Usage: "To `date`",
+				},
+				cli.StringFlag{
+					Name:  "user, u",
+					Usage: "Get activities of specified `username`",
 				},
 			},
 			Action: func(c *cli.Context) error {
