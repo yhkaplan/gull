@@ -1,7 +1,7 @@
 package view
 
 import (
-	"log"
+	"fmt"
 
 	"github.com/jroimartin/gocui"
 )
@@ -77,10 +77,10 @@ func (v *DashboardView) setListView(g *gocui.Gui, horizOffset int, maxX int, max
 	return nil
 }
 
-func (v *DashboardView) Run() {
+func (v *DashboardView) Run() error {
 	g, err := gocui.NewGui(gocui.Output256)
 	if err != nil {
-		log.Fatalf("NewGui: %v", err)
+		return fmt.Errorf("NewGui: %v", err)
 	}
 	defer g.Close()
 	v.g = g
@@ -90,8 +90,10 @@ func (v *DashboardView) Run() {
 	g.SetManagerFunc(v.layout)
 	//TODO: set keybindings w/ v.keybindings(g)
 	if err := g.MainLoop(); err != nil && err != gocui.ErrQuit {
-		log.Fatalf("MainLoop: %v", err)
+		return fmt.Errorf("MainLoop: %v", err)
 	}
+
+	return nil
 }
 
 func defaultSettings(g *gocui.Gui) {
