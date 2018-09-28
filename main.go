@@ -25,7 +25,7 @@ func main() {
 	app := cli.NewApp()
 	app.Name = "gull"
 	app.Usage = "GitHub activity dashboard"
-	app.Version = "0.0.1"
+	app.Version = "0.1.0"
 
 	dateFormat := "2006-01-02"
 	today := time.Now().Format(dateFormat)
