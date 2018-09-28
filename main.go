@@ -57,8 +57,6 @@ func main() {
 
 				fmt.Printf("Show activities: from %v, to %v\n", from, to)
 
-				// TODO
-				// Sample
 				client, err := github.NewClient(c.String("user"), os.Getenv("GITHUB_TOKEN"))
 				if err != nil {
 					return err
@@ -69,9 +67,7 @@ func main() {
 					return err
 				}
 				for _, event := range events {
-					var (
-						eventType, title, link string
-					)
+					var eventType, title, link string
 
 					eventType = *event.Type
 					switch eventType {
