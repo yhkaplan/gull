@@ -65,64 +65,16 @@ func main() {
 
 				fmt.Printf("Show activities: from %v, to %v\n", from, to)
 
-				baseURLStr := defaultBaseURL
-				if urlStr := os.Getenv(envGitHubAPI); urlStr != "" {
-					baseURLStr = urlStr
-				}
-				client, err := github.NewClient(c.String("user"), os.Getenv(envGitHubToken), baseURLStr)
+				activities, err := parseEvents(c, from, to)
 				if err != nil {
 					return err
+				} else if activities == nil {
+					return errors.New("Activities is nil")
 				}
 
-				events, err := client.GetEventsWithGrouping(context.Background(), from, to)
-				if err != nil {
-					return err
-				}
-				for _, event := range events {
-					var eventType, title, link string
-
-					eventType = *event.Type
-					switch eventType {
-					case "IssuesEvent":
-						issuesEvent, err := github.GetIssuesEventFromRaw(event)
-						if err != nil {
-							return err
-						}
-						link = *issuesEvent.Issue.HTMLURL
-						title = *issuesEvent.Issue.Title
-					case "PullRequestEvent":
-						pullRequestEvent, err := github.GetPullRequestEventFromRaw(event)
-						if err != nil {
-							return err
-						}
-						link = *pullRequestEvent.PullRequest.HTMLURL
-						title = *pullRequestEvent.PullRequest.Title
-					case "PullRequestReviewCommentEvent":
-						pullRequestReviewCommentEvent, err := github.GetPullRequestReviewCommentEventFromRaw(event)
-						if err != nil {
-							return err
-						}
-						link = *pullRequestReviewCommentEvent.Comment.HTMLURL
-						title = *pullRequestReviewCommentEvent.PullRequest.Title + " (comment)"
-					case "IssueCommentEvent":
-						issueCommentEvent, err := github.GetIssueCommentEventFromRaw(event)
-						if err != nil {
-							return err
-						}
-						link = *issueCommentEvent.Comment.HTMLURL
-						title = *issueCommentEvent.Issue.Title + " (comment)"
-					case "CommitCommentEvent":
-						commitCommentEvent, err := github.GetCommitCommentEventFromRaw(event)
-						if err != nil {
-							return err
-						}
-						link = *commitCommentEvent.Comment.HTMLURL
-						title = *commitCommentEvent.Repo.HTMLURL + " (comment)"
-					default:
-						return errors.New("invalid event type")
-					}
-
-					fmt.Printf("- [%s](%s): %s\n", title, link, eventType)
+				for i := 0; i < len(activities); i++ { //TODO: change to for range loop
+					a := activities[i]
+					fmt.Printf("- [%s](%s): %s\n", a.Title, a.Link, a.EventType)
 				}
 
 				return nil
@@ -158,11 +110,17 @@ func main() {
 				}
 				to = date.EndOfDay(to)
 
-				if err := view.New().Run(); err != nil {
+				activities, err := parseEvents(c, from, to)
+				if err != nil {
+					return err
+				} else if activities == nil {
+					return errors.New("Activities is nil")
+				}
+
+				if err := view.New(activities).Run(); err != nil {
 					return err
 				}
 
-				fmt.Printf("Visualizes activities: from %v, to %v\n", from, to)
 				return nil
 			},
 		},
@@ -172,4 +130,76 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+}
+
+func parseEvents(c *cli.Context, from, to time.Time) ([]github.GitHubActivity, error) {
+	baseURLStr := defaultBaseURL
+	if urlStr := os.Getenv(envGitHubAPI); urlStr != "" {
+		baseURLStr = urlStr
+	}
+	client, err := github.NewClient(c.String("user"), os.Getenv(envGitHubToken), baseURLStr)
+	if err != nil {
+		return nil, err
+	}
+
+	events, err := client.GetEventsWithGrouping(context.Background(), from, to)
+	if err != nil {
+		return nil, err
+	}
+
+	activities := make([]github.GitHubActivity, 0)
+
+	for _, event := range events {
+		var eventType, title, link string
+
+		eventType = *event.Type
+		switch eventType {
+		case "IssuesEvent":
+			issuesEvent, err := github.GetIssuesEventFromRaw(event)
+			if err != nil {
+				return nil, err
+			}
+			link = *issuesEvent.Issue.HTMLURL
+			title = *issuesEvent.Issue.Title
+		case "PullRequestEvent":
+			pullRequestEvent, err := github.GetPullRequestEventFromRaw(event)
+			if err != nil {
+				return nil, err
+			}
+			link = *pullRequestEvent.PullRequest.HTMLURL
+			title = *pullRequestEvent.PullRequest.Title
+		case "PullRequestReviewCommentEvent":
+			pullRequestReviewCommentEvent, err := github.GetPullRequestReviewCommentEventFromRaw(event)
+			if err != nil {
+				return nil, err
+			}
+			link = *pullRequestReviewCommentEvent.Comment.HTMLURL
+			title = *pullRequestReviewCommentEvent.PullRequest.Title + " (comment)"
+		case "IssueCommentEvent":
+			issueCommentEvent, err := github.GetIssueCommentEventFromRaw(event)
+			if err != nil {
+				return nil, err
+			}
+			link = *issueCommentEvent.Comment.HTMLURL
+			title = *issueCommentEvent.Issue.Title + " (comment)"
+		case "CommitCommentEvent":
+			commitCommentEvent, err := github.GetCommitCommentEventFromRaw(event)
+			if err != nil {
+				return nil, err
+			}
+			link = *commitCommentEvent.Comment.HTMLURL
+			title = *commitCommentEvent.Repo.HTMLURL + " (comment)"
+		default:
+			return nil, errors.New("invalid event type")
+		}
+
+		activity := github.GitHubActivity{
+			Link:      link,
+			Title:     title,
+			EventType: eventType,
+		}
+		activities = append(activities, activity)
+	}
+
+	return activities, nil
 }
