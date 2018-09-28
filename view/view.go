@@ -71,9 +71,10 @@ func (v *DashboardView) drawCategories() error {
 	return nil
 }
 
-func (v *DashboardView) currentIndex() int {
-	return v.selectedRowIndex
-}
+// TODO: will need this for navigation
+// func (v *DashboardView) currentIndex() int {
+// 	return v.selectedRowIndex
+// }
 
 // New initializes the DashboardView
 func New() *DashboardView {
