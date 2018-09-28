@@ -119,7 +119,9 @@ func (v *DashboardView) setCategoryView(g *gocui.Gui, horizOffset int, maxY int)
 		categoryView.SelBgColor = gocui.ColorWhite
 		categoryView.SelFgColor = gocui.ColorBlack
 		categoryView.Highlight = true
-		categoryView.SetCursor(0, 0)
+		if err := categoryView.SetCursor(0, 0); err != nil {
+			return err
+		}
 
 		v.categoryView = categoryView
 		v.selectedView = categoryView // Category view is always initially selected
