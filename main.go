@@ -14,6 +14,13 @@ import (
 	"github.com/yhkaplan/gull/view"
 )
 
+const (
+	defaultBaseURL = "https://api.github.com/"
+
+	envGitHubToken = "GITHUB_TOKEN"
+	envGitHubAPI   = "GITHUB_API"
+)
+
 func main() {
 	app := cli.NewApp()
 	app.Name = "gull"
@@ -58,7 +65,11 @@ func main() {
 
 				fmt.Printf("Show activities: from %v, to %v\n", from, to)
 
-				client, err := github.NewClient(c.String("user"), os.Getenv("GITHUB_TOKEN"))
+				baseURLStr := defaultBaseURL
+				if urlStr := os.Getenv(envGitHubAPI); urlStr != "" {
+					baseURLStr = urlStr
+				}
+				client, err := github.NewClient(c.String("user"), os.Getenv(envGitHubToken), baseURLStr)
 				if err != nil {
 					return err
 				}
