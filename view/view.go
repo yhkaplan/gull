@@ -9,6 +9,8 @@ import (
 	"github.com/yhkaplan/gull/github"
 )
 
+var eventTypes []string = github.EventTypes
+
 // DashboardView represents entire dashboard view
 type DashboardView struct {
 	g                *gocui.Gui
@@ -147,6 +149,12 @@ func (v *DashboardView) setCategoryView(g *gocui.Gui, horizOffset int, maxY int)
 		categoryView.Frame = true
 		categoryView.BgColor = gocui.ColorBlack
 		categoryView.FgColor = gocui.ColorWhite
+		categoryView.SelBgColor = gocui.ColorWhite
+		categoryView.SelFgColor = gocui.ColorBlack
+		categoryView.Highlight = true
+		if err := categoryView.SetCursor(0, 0); err != nil {
+			return err
+		}
 
 		v.categoryView = categoryView
 		v.selectedView = categoryView // Category view is always initially selected
@@ -206,6 +214,12 @@ func (v *DashboardView) Run() error {
 	if err := g.SetKeybinding("", gocui.KeyCtrlC, gocui.ModNone, quit); err != nil {
 		return err
 	}
+	if err := g.SetKeybinding("", gocui.KeyArrowDown, gocui.ModNone, arrowDown); err != nil {
+		return fmt.Errorf("SetKeybinding: %v", err)
+	}
+	if err := g.SetKeybinding("", gocui.KeyArrowUp, gocui.ModNone, arrowUp); err != nil {
+		return fmt.Errorf("SetKeybinding: %v", err)
+	}
 
 	if err := g.MainLoop(); err != nil && err != gocui.ErrQuit {
 		return fmt.Errorf("MainLoop: %v", err)
@@ -224,4 +238,25 @@ func defaultSettings(g *gocui.Gui) {
 	g.BgColor = gocui.ColorBlack
 	g.Mouse = true
 	g.Highlight = true
+}
+
+func arrowDown(g *gocui.Gui, v *gocui.View) error {
+	cx, cy := v.Cursor()
+	if cy >= len(eventTypes) {
+		cy = -1
+	}
+	if err := v.SetCursor(cx, cy+1); err != nil {
+		return err
+	}
+	return nil
+}
+func arrowUp(g *gocui.Gui, v *gocui.View) error {
+	cx, cy := v.Cursor()
+	if cy <= 0 {
+		cy = len(eventTypes) + 1
+	}
+	if err := v.SetCursor(cx, cy-1); err != nil {
+		return err
+	}
+	return nil
 }
