@@ -28,9 +28,9 @@ type categoryList struct {
 
 // ActivityList is a generic activity type
 type ActivityList struct {
-	title         string
-	items         []github.GitHubActivity
-	isHighlighted bool
+	// title         string
+	items []github.GitHubActivity
+	// isHighlighted bool
 }
 
 // Name always equals title
