@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"net/url"
 	"time"
 
 	"github.com/google/go-github/github"
@@ -27,9 +28,13 @@ type Client struct {
 	*github.Client
 }
 
-func NewClient(owner, token string) (*Client, error) {
+func NewClient(owner, token, urlStr string) (*Client, error) {
 	if len(token) == 0 {
 		return nil, errors.New("missing GitHub API token")
+	}
+	baseURL, err := url.ParseRequestURI(urlStr)
+	if err != nil {
+		return nil, errors.New("failed to parse GitHub URI")
 	}
 
 	ctx := context.Background()
@@ -39,6 +44,7 @@ func NewClient(owner, token string) (*Client, error) {
 	tc := oauth2.NewClient(ctx, ts)
 
 	client := github.NewClient(tc)
+	client.BaseURL = baseURL
 
 	return &Client{
 		owner:  owner,
@@ -55,7 +61,7 @@ func (c *Client) GetEventsWithGrouping(ctx context.Context, from, to time.Time) 
 	}
 
 	opt := &github.ListOptions{PerPage: perPage}
-	events, _, err := c.Activity.ListEventsPerformedByUser(ctx, owner, true, opt)
+	events, _, err := c.Activity.ListEventsPerformedByUser(ctx, owner, false, opt)
 	if err != nil {
 		return nil, err
 	}
