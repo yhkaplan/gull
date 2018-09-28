@@ -60,21 +60,29 @@ func (c *Client) GetEventsWithGrouping(ctx context.Context, from, to time.Time) 
 		return nil, err
 	}
 
-	opt := &github.ListOptions{PerPage: perPage}
-	events, _, err := c.Activity.ListEventsPerformedByUser(ctx, owner, false, opt)
-	if err != nil {
-		return nil, err
-	}
+	dst := make([]*github.Event, 0, perPage)
+	page := 1
+	for {
+		opt := &github.ListOptions{PerPage: perPage, Page: page}
+		events, resp, err := c.Activity.ListEventsPerformedByUser(ctx, owner, false, opt)
+		if err != nil {
+			return nil, err
+		}
 
-	dst := make([]*github.Event, 0, len(events))
-	for _, event := range events {
-		for _, gullEventType := range EventTypes {
-			if *event.Type == gullEventType {
-				if event.CreatedAt.After(from) && event.CreatedAt.Before(to) {
-					dst = append(dst, event)
+		for _, event := range events {
+			for _, gullEventType := range EventTypes {
+				if *event.Type == gullEventType {
+					if event.CreatedAt.After(from) && event.CreatedAt.Before(to) {
+						dst = append(dst, event)
+					}
 				}
 			}
 		}
+
+		if resp.NextPage == 0 {
+			break
+		}
+		page++
 	}
 
 	return dst, nil
