@@ -121,7 +121,7 @@ func (v *DashboardView) size() (int, int) {
 
 func (v *DashboardView) layout(g *gocui.Gui) error {
 	maxX, maxY := v.size()
-	horizOffset := maxX / 2
+	horizOffset := maxX / 4
 
 	err := v.setCategoryView(g, horizOffset, maxY)
 	if err != nil {
@@ -177,8 +177,8 @@ func (v *DashboardView) setListView(g *gocui.Gui, horizOffset int, maxX int, max
 		}
 
 		listView.Frame = true
-		listView.BgColor = gocui.ColorGreen
-		listView.FgColor = gocui.ColorYellow
+		listView.BgColor = gocui.ColorBlack
+		listView.FgColor = gocui.ColorGreen
 
 		v.activityView = listView
 
