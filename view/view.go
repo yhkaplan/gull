@@ -12,16 +12,24 @@ import (
 // DashboardView represents entire dashboard view
 type DashboardView struct {
 	g                *gocui.Gui
-	categoryView     *gocui.View
-	categoryList     *categoryList
-	activityView     *gocui.View
-	selectedView     *gocui.View
+	categoryView     *gocui.View   // Leftmost view
+	categoryList     *categoryList // Left viewmodel
+	activityView     *gocui.View   // Rightmost view
+	activityList     *ActivityList // Right viewmodel
+	selectedView     *gocui.View   // The view currently selected by user
 	selectedRowIndex int
 }
 
 type categoryList struct {
 	title         string
 	items         []string
+	isHighlighted bool
+}
+
+// ActivityList is a generic activity type
+type ActivityList struct {
+	title         string
+	items         []github.GitHubActivity
 	isHighlighted bool
 }
 
@@ -77,8 +85,11 @@ func (v *DashboardView) drawCategories() error {
 // }
 
 // New initializes the DashboardView
-func New() *DashboardView {
-	return &DashboardView{}
+func New(a []github.GitHubActivity) *DashboardView {
+	activityList := ActivityList{items: a}
+	return &DashboardView{
+		activityList: &activityList, //TODO: does this work?
+	}
 }
 
 // Returns window's width and height

@@ -23,6 +23,12 @@ var EventTypes = []string{
 	"CommitCommentEvent",
 }
 
+type GitHubActivity struct {
+	Link      string
+	Title     string
+	EventType string
+}
+
 type Client struct {
 	owner string
 	*github.Client

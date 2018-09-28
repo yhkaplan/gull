@@ -74,7 +74,7 @@ func main() {
 
 				for i := 0; i < len(activities); i++ { //TODO: change to for range loop
 					a := activities[i]
-					fmt.Printf("- [%s](%s): %s\n", a.title, a.link, a.eventType)
+					fmt.Printf("- [%s](%s): %s\n", a.Title, a.Link, a.EventType)
 				}
 
 				return nil
@@ -100,17 +100,24 @@ func main() {
 				},
 			},
 			Action: func(c *cli.Context) error {
-				// from, err := date.Parse(c.String("from"))
-				// if err != nil {
-				// 	return err
-				// }
-				// to, err := date.Parse(c.String("to"))
-				// if err != nil {
-				// 	return err
-				// }
-				// to = date.EndOfDay(to)
+				from, err := date.Parse(c.String("from"))
+				if err != nil {
+					return err
+				}
+				to, err := date.Parse(c.String("to"))
+				if err != nil {
+					return err
+				}
+				to = date.EndOfDay(to)
 
-				if err := view.New().Run(); err != nil {
+				activities, err := parseEvents(c, from, to)
+				if err != nil {
+					return err
+				} else if activities == nil {
+					return errors.New("Activities is nil")
+				}
+
+				if err := view.New(activities).Run(); err != nil {
 					return err
 				}
 
@@ -125,13 +132,7 @@ func main() {
 	}
 }
 
-type GitHubActivity struct { //TODO: make into struct?
-	link      string
-	title     string
-	eventType string
-}
-
-func parseEvents(c *cli.Context, from, to time.Time) ([]GitHubActivity, error) {
+func parseEvents(c *cli.Context, from, to time.Time) ([]github.GitHubActivity, error) {
 	baseURLStr := defaultBaseURL
 	if urlStr := os.Getenv(envGitHubAPI); urlStr != "" {
 		baseURLStr = urlStr
@@ -146,7 +147,7 @@ func parseEvents(c *cli.Context, from, to time.Time) ([]GitHubActivity, error) {
 		return nil, err
 	}
 
-	activities := make([]GitHubActivity, 0)
+	activities := make([]github.GitHubActivity, 0)
 
 	for _, event := range events {
 		var eventType, title, link string
@@ -192,10 +193,10 @@ func parseEvents(c *cli.Context, from, to time.Time) ([]GitHubActivity, error) {
 			return nil, errors.New("invalid event type")
 		}
 
-		activity := GitHubActivity{
-			link:      link,
-			title:     title,
-			eventType: eventType,
+		activity := github.GitHubActivity{
+			Link:      link,
+			Title:     title,
+			EventType: eventType,
 		}
 		activities = append(activities, activity)
 	}
