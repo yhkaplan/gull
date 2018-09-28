@@ -147,7 +147,10 @@ func main() {
 				}
 				to = date.EndOfDay(to)
 
-				view.New().Run()
+				if err := view.New().Run(); err != nil {
+					return err
+				}
+
 				fmt.Printf("Visualizes activities: from %v, to %v\n", from, to)
 				return nil
 			},
