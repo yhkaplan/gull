@@ -11,6 +11,7 @@ import (
 	"github.com/urfave/cli"
 	"github.com/yhkaplan/gull/date"
 	"github.com/yhkaplan/gull/github"
+	"github.com/yhkaplan/gull/view"
 )
 
 func main() {
@@ -146,6 +147,7 @@ func main() {
 				}
 				to = date.EndOfDay(to)
 
+				view.New().Run()
 				fmt.Printf("Visualizes activities: from %v, to %v\n", from, to)
 				return nil
 			},
