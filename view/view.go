@@ -9,6 +9,7 @@ import (
 	"github.com/yhkaplan/gull/github"
 )
 
+// DashboardView represents entire dashboard view
 type DashboardView struct {
 	g                *gocui.Gui
 	categoryView     *gocui.View
@@ -74,7 +75,7 @@ func (v *DashboardView) currentIndex() int {
 	return v.selectedRowIndex
 }
 
-// Initializes DashboardView
+// New initializes the DashboardView
 func New() *DashboardView {
 	return &DashboardView{}
 }
@@ -121,8 +122,12 @@ func (v *DashboardView) setCategoryView(g *gocui.Gui, horizOffset int, maxY int)
 			title: name,
 			items: github.EventTypes,
 		}
-		v.categoryList.Focus(g)
-		v.drawCategories()
+		if err := v.categoryList.Focus(g); err != nil {
+			return err
+		}
+		if err := v.drawCategories(); err != nil {
+			return err
+		}
 	}
 
 	return nil
@@ -148,6 +153,7 @@ func (v *DashboardView) setListView(g *gocui.Gui, horizOffset int, maxX int, max
 	return nil
 }
 
+// Run starts up the cui
 func (v *DashboardView) Run() error {
 	g, err := gocui.NewGui(gocui.Output256)
 	if err != nil {
