@@ -119,9 +119,10 @@ func (v *DashboardView) setCategoryView(g *gocui.Gui, horizOffset int, maxY int)
 		v.selectedView = categoryView // Category view is always initially selected
 		v.selectedRowIndex = 0        // Top row always the default
 
+		eventTypes := append([]string{"All"}, github.EventTypes...)
 		v.categoryList = &categoryList{
 			title: name,
-			items: github.EventTypes,
+			items: eventTypes,
 		}
 		if err := v.categoryList.Focus(g); err != nil {
 			return err
