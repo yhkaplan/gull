@@ -151,7 +151,6 @@ func main() {
 					return err
 				}
 
-				fmt.Printf("Visualizes activities: from %v, to %v\n", from, to)
 				return nil
 			},
 		},

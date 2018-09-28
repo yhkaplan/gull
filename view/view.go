@@ -166,12 +166,20 @@ func (v *DashboardView) Run() error {
 	defaultSettings(g)
 
 	g.SetManagerFunc(v.layout)
-	//TODO: set keybindings w/ v.keybindings(g)
+	//TODO: move keybindings to separate file
+	if err := g.SetKeybinding("", gocui.KeyCtrlC, gocui.ModNone, quit); err != nil {
+		return err
+	}
+
 	if err := g.MainLoop(); err != nil && err != gocui.ErrQuit {
 		return fmt.Errorf("MainLoop: %v", err)
 	}
 
 	return nil
+}
+
+func quit(g *gocui.Gui, v *gocui.View) error {
+	return gocui.ErrQuit
 }
 
 func defaultSettings(g *gocui.Gui) {
