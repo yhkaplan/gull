@@ -51,6 +51,12 @@ func (l *categoryList) displayItem(i int, v *gocui.View) string {
 	return fmt.Sprintf(" %v%v", item, sp)
 }
 
+func (l *ActivityList) displayItem(a github.GitHubActivity, v *gocui.View) string {
+	item := fmt.Sprintf("%s: %s %s", a.EventType, a.Title, a.Link)
+	sp := spaces(maxWidth(v) - len(item) - 3)
+	return fmt.Sprintf(" %v%v", item, sp)
+}
+
 func maxWidth(v *gocui.View) int {
 	_, y := v.Size()
 	return y
@@ -71,6 +77,22 @@ func (v *DashboardView) drawCategories() error {
 		fmt.Printf("%d", i)
 		//l.Clear //TODO: to implement
 		_, err := fmt.Fprintln(v.categoryView, v.categoryList.displayItem(i, v.categoryView))
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (v *DashboardView) drawListView() error {
+	activities := v.activityList.items
+
+	for i := 0; i < len(activities); i++ {
+		fmt.Printf("%d", i)
+		//l.Clear //TODO: to implement
+		a := activities[i]
+		_, err := fmt.Fprintln(v.activityView, v.activityList.displayItem(a, v.activityView))
 		if err != nil {
 			return err
 		}
@@ -160,7 +182,9 @@ func (v *DashboardView) setListView(g *gocui.Gui, horizOffset int, maxX int, max
 
 		v.activityView = listView
 
-		//TODO: Add go func call to get info here
+		if err := v.drawListView(); err != nil {
+			return err
+		}
 	}
 
 	return nil
