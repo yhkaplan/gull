@@ -232,7 +232,9 @@ func (v *DashboardView) Run() error {
 		if err := view.SetCursor(cx, cy+1); err != nil {
 			return err
 		}
-		v.drawListView()
+		if err := v.drawListView(); err != nil {
+			return err
+		}
 		return nil
 	})
 	if err != nil {
@@ -246,7 +248,9 @@ func (v *DashboardView) Run() error {
 		if err := view.SetCursor(cx, cy-1); err != nil {
 			return err
 		}
-		v.drawListView()
+		if err := v.drawListView(); err != nil {
+			return err
+		}
 		return nil
 	})
 	if err != nil {
