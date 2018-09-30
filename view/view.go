@@ -92,16 +92,15 @@ func (v *DashboardView) drawListView() error {
 	v.activityView.Clear()
 	activities := v.activityList.items
 	_, y := v.categoryView.Cursor()
-	currentCategory, err := v.categoryView.Line(y)
+	currentCategoryLabel, err := v.categoryView.Line(y)
 	if err != nil {
 		return err
 	}
-	current := strings.Trim(currentCategory, " ")
+	currentCategory := strings.Trim(currentCategoryLabel, " ")
 
 	for i := 0; i < len(activities); i++ {
-		//l.Clear //TODO: to implement
 		a := activities[i]
-		if current != "All" && current != a.EventType {
+		if currentCategory != "All" && currentCategory != a.EventType {
 			continue
 		}
 		_, err := fmt.Fprintln(v.activityView, v.activityList.displayItem(a, v.activityView))
