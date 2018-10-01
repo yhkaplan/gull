@@ -47,6 +47,10 @@ func main() {
 					Value: today,
 					Usage: "To `date`",
 				},
+				cli.BoolFlag{
+					Name:  "eventType, type",
+					Usage: "Show event type along with output",
+				},
 				cli.StringFlag{
 					Name:  "user, u",
 					Usage: "Get activities of specified `username`",
@@ -74,7 +78,12 @@ func main() {
 
 				for i := 0; i < len(activities); i++ { //TODO: change to for range loop
 					a := activities[i]
-					fmt.Printf("- [%s](%s): %s\n", a.Title, a.Link, a.EventType)
+
+					if c.Bool("eventType") {
+						fmt.Printf("- [%s](%s): %s\n", a.Title, a.Link, a.EventType)
+					} else {
+						fmt.Printf("- [%s](%s)\n", a.Title, a.Link)
+					}
 				}
 
 				return nil
