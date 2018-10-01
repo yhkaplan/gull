@@ -3,6 +3,7 @@ package view
 import (
 	"bytes"
 	"fmt"
+	"strings"
 
 	"github.com/jroimartin/gocui" //TODO: alias as c instead of gocuit
 
@@ -88,12 +89,20 @@ func (v *DashboardView) drawCategories() error {
 }
 
 func (v *DashboardView) drawListView() error {
+	v.activityView.Clear()
 	activities := v.activityList.items
+	_, y := v.categoryView.Cursor()
+	currentCategoryLabel, err := v.categoryView.Line(y)
+	if err != nil {
+		return err
+	}
+	currentCategory := strings.Trim(currentCategoryLabel, " ")
 
 	for i := 0; i < len(activities); i++ {
-		fmt.Printf("%d", i)
-		//l.Clear //TODO: to implement
 		a := activities[i]
+		if currentCategory != "All" && currentCategory != a.EventType {
+			continue
+		}
 		_, err := fmt.Fprintln(v.activityView, v.activityList.displayItem(a, v.activityView))
 		if err != nil {
 			return err
@@ -214,10 +223,36 @@ func (v *DashboardView) Run() error {
 	if err := g.SetKeybinding("", gocui.KeyCtrlC, gocui.ModNone, quit); err != nil {
 		return err
 	}
-	if err := g.SetKeybinding("", gocui.KeyArrowDown, gocui.ModNone, arrowDown); err != nil {
+	err = g.SetKeybinding("", gocui.KeyArrowDown, gocui.ModNone, func(gui *gocui.Gui, view *gocui.View) error {
+		cx, cy := view.Cursor()
+		if cy >= len(eventTypes) {
+			cy = -1
+		}
+		if err := view.SetCursor(cx, cy+1); err != nil {
+			return err
+		}
+		if err := v.drawListView(); err != nil {
+			return err
+		}
+		return nil
+	})
+	if err != nil {
 		return fmt.Errorf("SetKeybinding: %v", err)
 	}
-	if err := g.SetKeybinding("", gocui.KeyArrowUp, gocui.ModNone, arrowUp); err != nil {
+	err = g.SetKeybinding("", gocui.KeyArrowUp, gocui.ModNone, func(gui *gocui.Gui, view *gocui.View) error {
+		cx, cy := view.Cursor()
+		if cy <= 0 {
+			cy = len(eventTypes) + 1
+		}
+		if err := view.SetCursor(cx, cy-1); err != nil {
+			return err
+		}
+		if err := v.drawListView(); err != nil {
+			return err
+		}
+		return nil
+	})
+	if err != nil {
 		return fmt.Errorf("SetKeybinding: %v", err)
 	}
 
@@ -238,25 +273,4 @@ func defaultSettings(g *gocui.Gui) {
 	g.BgColor = gocui.ColorBlack
 	g.Mouse = true
 	g.Highlight = true
-}
-
-func arrowDown(g *gocui.Gui, v *gocui.View) error {
-	cx, cy := v.Cursor()
-	if cy >= len(eventTypes) {
-		cy = -1
-	}
-	if err := v.SetCursor(cx, cy+1); err != nil {
-		return err
-	}
-	return nil
-}
-func arrowUp(g *gocui.Gui, v *gocui.View) error {
-	cx, cy := v.Cursor()
-	if cy <= 0 {
-		cy = len(eventTypes) + 1
-	}
-	if err := v.SetCursor(cx, cy-1); err != nil {
-		return err
-	}
-	return nil
 }
