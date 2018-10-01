@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/urfave/cli"
@@ -201,6 +202,8 @@ func parseEvents(c *cli.Context, from, to time.Time) ([]github.GitHubActivity, e
 		default:
 			return nil, errors.New("invalid event type")
 		}
+
+		title = strings.Replace(title, " (comment)", "", 1)
 
 		activity := github.GitHubActivity{
 			Link:      link,
