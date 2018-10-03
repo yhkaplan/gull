@@ -49,7 +49,7 @@ func main() {
 					Usage: "To `date`",
 				},
 				cli.BoolFlag{
-					Name:  "eventType, type",
+					Name:  "eventType",
 					Usage: "Show event type along with output",
 				},
 				cli.StringFlag{
