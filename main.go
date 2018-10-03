@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/urfave/cli"
@@ -47,6 +48,10 @@ func main() {
 					Value: today,
 					Usage: "To `date`",
 				},
+				cli.BoolFlag{
+					Name:  "eventType",
+					Usage: "Show event type along with output",
+				},
 				cli.StringFlag{
 					Name:  "user, u",
 					Usage: "Get activities of specified `username`",
@@ -74,7 +79,12 @@ func main() {
 
 				for i := 0; i < len(activities); i++ { //TODO: change to for range loop
 					a := activities[i]
-					fmt.Printf("- [%s](%s): %s\n", a.Title, a.Link, a.EventType)
+
+					if c.Bool("eventType") {
+						fmt.Printf("- [%s](%s): %s\n", a.Title, a.Link, a.EventType)
+					} else {
+						fmt.Printf("- [%s](%s)\n", a.Title, a.Link)
+					}
 				}
 
 				return nil
@@ -192,6 +202,8 @@ func parseEvents(c *cli.Context, from, to time.Time) ([]github.GitHubActivity, e
 		default:
 			return nil, errors.New("invalid event type")
 		}
+
+		title = strings.Replace(title, " (comment)", "", 1)
 
 		activity := github.GitHubActivity{
 			Link:      link,
