@@ -28,6 +28,8 @@ help, h    Shows a list of commands or help for one command
 --from date, -f date          From date (default: "2018-09-21")
 --to date, -t date            To date (default: "2018-09-28")
 --user username, -u username  Get activities of specified username
+--eventType                   Show event type along with output (default: don't show)
+--comment -c                  Show comment events as well (default: don't show)
 ```
 
 ### For GitHub Enterprise
