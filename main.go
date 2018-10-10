@@ -56,6 +56,10 @@ func main() {
 					Name:  "user, u",
 					Usage: "Get activities of specified `username`",
 				},
+				cli.BoolFlag{
+					Name:  "comment, c",
+					Usage: "Show events that are PR, issue, and other kinds of comments",
+				},
 			},
 			Action: func(c *cli.Context) error {
 				from, err := date.Parse(c.String("from"))
@@ -77,8 +81,11 @@ func main() {
 					return errors.New("Activities is nil")
 				}
 
-				for i := 0; i < len(activities); i++ { //TODO: change to for range loop
-					a := activities[i]
+				for _, a := range activities {
+					_, isCommentType := github.CommentEventTypes[a.EventType]
+					if !c.Bool("comment") && isCommentType {
+						continue
+					}
 
 					if c.Bool("eventType") {
 						fmt.Printf("- [%s](%s): %s\n", a.Title, a.Link, a.EventType)
