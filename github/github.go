@@ -23,6 +23,13 @@ var EventTypes = []string{
 	"CommitCommentEvent",
 }
 
+// Golang version of a set
+var CommentEventTypes = map[string]struct{}{
+	"PullRequestReviewCommentEvent": {},
+	"IssueCommentEvent":             {},
+	"CommitCommentEvent":            {},
+}
+
 type GitHubActivity struct {
 	Link      string
 	Title     string
