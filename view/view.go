@@ -6,11 +6,15 @@ import (
 	"strings"
 
 	"github.com/jroimartin/gocui" //TODO: alias as c instead of gocuit
-
 	"github.com/yhkaplan/gull/github"
 )
 
 var eventTypes []string = github.EventTypes
+
+// Interface injection for mocks
+type gcui interface {
+	SetCurrentView(name string) (*gocui.View, error)
+}
 
 // DashboardView represents entire dashboard view
 type DashboardView struct {
@@ -41,9 +45,9 @@ func (l *categoryList) name() string {
 	return l.title
 }
 
-func (l *categoryList) Focus(g *gocui.Gui) error {
+func (l *categoryList) Focus(g gcui) error { //TODO: return to pointer?
 	l.isHighlighted = true
-	_, err := g.SetCurrentView(l.name())
+	_, err := g.SetCurrentView(l.name()) //TODO: refactor to accept returned view for testing
 
 	return err
 }
