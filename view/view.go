@@ -63,7 +63,7 @@ func (l *categoryList) displayItem(i int, v view) string {
 	return fmt.Sprintf(" %v%v", item, sp)
 }
 
-func (l *ActivityList) displayItem(a github.GitHubActivity, v view) string {
+func displayItem(a github.GitHubActivity, v view) string {
 	item := fmt.Sprintf("%s: %s %s", a.EventType, a.Title, a.Link)
 	sp := spaces(maxWidth(v) - len(item) - 3)
 	return fmt.Sprintf(" %v%v", item, sp)
@@ -112,7 +112,7 @@ func (v *DashboardView) drawListView() error {
 		if currentCategory != "All" && currentCategory != a.EventType {
 			continue
 		}
-		_, err := fmt.Fprintln(v.activityView, v.activityList.displayItem(a, v.activityView))
+		_, err := fmt.Fprintln(v.activityView, displayItem(a, v.activityView))
 		if err != nil {
 			return err
 		}
