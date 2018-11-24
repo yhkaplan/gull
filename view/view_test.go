@@ -1,7 +1,9 @@
 package view
 
 import "testing"
+import "fmt"
 import "github.com/jroimartin/gocui"
+import "github.com/yhkaplan/gull/github"
 
 var l = categoryList{}
 var g = gocui.Gui{}
@@ -33,7 +35,7 @@ func TestFocus(t *testing.T) {
 	}
 }
 
-func TestDisplayItem(t *testing.T) {
+func TestDisplayItemRegular(t *testing.T) {
 	resetValues()
 	l.items = []string{"test1", "test2"}
 	expected := " test2  "
@@ -42,6 +44,21 @@ func TestDisplayItem(t *testing.T) {
 
 	if result != expected {
 		t.Errorf("Result expected to be: %s, but was %s", expected, result)
+	}
+}
+
+func TestDisplayItemGithubActivityWithoutSpaces(t *testing.T) {
+	a := github.GitHubActivity{
+		Link:      "http:///www.google.com",
+		Title:     "A Title",
+		EventType: "SomeType",
+	}
+	expected := fmt.Sprintf(" %s: %s %s", a.EventType, a.Title, a.Link)
+
+	result := displayItem(a, v)
+
+	if result != expected {
+		t.Errorf("Expected %s, got %s", expected, result)
 	}
 }
 
@@ -58,7 +75,6 @@ func (v viewMock) Size() (x, y int) {
 
 func resetValues() {
 	l = categoryList{}
-
 	g = gocui.Gui{}
 	v = viewMock{}
 }
