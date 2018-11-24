@@ -1,10 +1,12 @@
 package view
 
-import "testing"
-import "fmt"
+import (
+	"fmt"
+	"testing"
 
-import "github.com/jroimartin/gocui"
-import "github.com/yhkaplan/gull/github"
+	"github.com/jroimartin/gocui"
+	"github.com/yhkaplan/gull/github"
+)
 
 var l = categoryList{}
 var g = gocui.Gui{}
