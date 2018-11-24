@@ -16,6 +16,11 @@ type gcui interface {
 	SetCurrentView(name string) (*gocui.View, error)
 }
 
+// Interface injection for mocks
+type view interface {
+	Size() (x, y int)
+}
+
 // DashboardView represents entire dashboard view
 type DashboardView struct {
 	g                *gocui.Gui
@@ -52,19 +57,19 @@ func (l *categoryList) Focus(g gcui) error { //TODO: return to pointer?
 	return err
 }
 
-func (l *categoryList) displayItem(i int, v *gocui.View) string {
+func (l *categoryList) displayItem(i int, v view) string {
 	item := fmt.Sprint(l.items[i])
 	sp := spaces(maxWidth(v) - len(item) - 3)
 	return fmt.Sprintf(" %v%v", item, sp)
 }
 
-func (l *ActivityList) displayItem(a github.GitHubActivity, v *gocui.View) string {
+func (l *ActivityList) displayItem(a github.GitHubActivity, v view) string {
 	item := fmt.Sprintf("%s: %s %s", a.EventType, a.Title, a.Link)
 	sp := spaces(maxWidth(v) - len(item) - 3)
 	return fmt.Sprintf(" %v%v", item, sp)
 }
 
-func maxWidth(v *gocui.View) int {
+func maxWidth(v view) int {
 	_, y := v.Size()
 	return y
 }
