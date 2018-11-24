@@ -2,6 +2,7 @@ package view
 
 import "testing"
 import "fmt"
+
 import "github.com/jroimartin/gocui"
 import "github.com/yhkaplan/gull/github"
 
@@ -54,6 +55,21 @@ func TestDisplayItemGithubActivityWithoutSpaces(t *testing.T) {
 		EventType: "SomeType",
 	}
 	expected := fmt.Sprintf(" %s: %s %s", a.EventType, a.Title, a.Link)
+
+	result := displayItem(a, v)
+
+	if result != expected {
+		t.Errorf("Expected %s, got %s", expected, result)
+	}
+}
+
+func TestDisplayItemGithubActivityWithSpaces(t *testing.T) {
+	a := github.GitHubActivity{
+		Link:      "",
+		Title:     "",
+		EventType: "",
+	}
+	expected := fmt.Sprintf(" %s: %s %s    ", a.EventType, a.Title, a.Link)
 
 	result := displayItem(a, v)
 
