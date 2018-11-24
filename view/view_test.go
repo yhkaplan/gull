@@ -17,7 +17,7 @@ func TestName(t *testing.T) {
 	result := l.name()
 
 	if result != title {
-		t.Errorf("l.name() is supposed to be title, but was instead: %s", result)
+		t.Errorf("l.name() is supposed to be title, but got %s", result)
 	}
 }
 
@@ -31,7 +31,7 @@ func TestFocus(t *testing.T) {
 	}
 
 	if err == nil {
-		t.Error("Err is not supposed to be nil, but it was")
+		t.Error("Expected not nil, but was")
 	}
 }
 
@@ -43,7 +43,7 @@ func TestDisplayItemRegular(t *testing.T) {
 	result := l.displayItem(1, v)
 
 	if result != expected {
-		t.Errorf("Result expected to be: %s, but was %s", expected, result)
+		t.Errorf("Expected %s, got %s", expected, result)
 	}
 }
 
