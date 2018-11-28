@@ -6,11 +6,20 @@ import (
 	"strings"
 
 	"github.com/jroimartin/gocui" //TODO: alias as c instead of gocuit
-
 	"github.com/yhkaplan/gull/github"
 )
 
 var eventTypes []string = github.EventTypes
+
+// Interface injection for mocks
+type gcui interface {
+	SetCurrentView(name string) (*gocui.View, error)
+}
+
+// Interface injection for mocks
+type view interface {
+	Size() (x, y int)
+}
 
 // DashboardView represents entire dashboard view
 type DashboardView struct {
@@ -41,26 +50,26 @@ func (l *categoryList) name() string {
 	return l.title
 }
 
-func (l *categoryList) Focus(g *gocui.Gui) error {
+func (l *categoryList) Focus(g gcui) error { //TODO: return to pointer?
 	l.isHighlighted = true
-	_, err := g.SetCurrentView(l.name())
+	_, err := g.SetCurrentView(l.name()) //TODO: refactor to accept returned view for testing
 
 	return err
 }
 
-func (l *categoryList) displayItem(i int, v *gocui.View) string {
+func (l *categoryList) displayItem(i int, v view) string {
 	item := fmt.Sprint(l.items[i])
 	sp := spaces(maxWidth(v) - len(item) - 3)
 	return fmt.Sprintf(" %v%v", item, sp)
 }
 
-func (l *ActivityList) displayItem(a github.GitHubActivity, v *gocui.View) string {
+func displayItem(a github.GitHubActivity, v view) string {
 	item := fmt.Sprintf("%s: %s %s", a.EventType, a.Title, a.Link)
 	sp := spaces(maxWidth(v) - len(item) - 3)
 	return fmt.Sprintf(" %v%v", item, sp)
 }
 
-func maxWidth(v *gocui.View) int {
+func maxWidth(v view) int {
 	_, y := v.Size()
 	return y
 }
@@ -103,7 +112,7 @@ func (v *DashboardView) drawListView() error {
 		if currentCategory != "All" && currentCategory != a.EventType {
 			continue
 		}
-		_, err := fmt.Fprintln(v.activityView, v.activityList.displayItem(a, v.activityView))
+		_, err := fmt.Fprintln(v.activityView, displayItem(a, v.activityView))
 		if err != nil {
 			return err
 		}
