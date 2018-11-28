@@ -80,9 +80,6 @@ func TestDisplayItemGithubActivityWithSpaces(t *testing.T) {
 	}
 }
 
-//TODO: use mock for test focus above
-type mockGoCui struct{}
-
 type viewMock struct{}
 
 func (v viewMock) Size() (x, y int) {
