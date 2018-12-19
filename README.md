@@ -2,7 +2,11 @@
 Gull is a utility for reviewing your GitHub or GitHub Enterprise activity. You can use it to export activity to markdown or explore interactively via the dashboard.
 
 ## Install
-`go get -u github.com/yhkaplan/gull`
+```
+git clone {this_project}
+cd {folder_name}
+go install
+```
 
 Require Go
 
