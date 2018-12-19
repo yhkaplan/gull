@@ -1,3 +1,7 @@
+# This is a weird way of telling Travis to use the fast container-based test
+# runner instead of the slow VM-based runner.
+sudo: false
+
 language: go
 
 # Only the last two Go releases are supported by the Go team with security
@@ -7,6 +11,10 @@ go:
   - 1.11.x
   - 1.x
 
+# Force-enable Go modules. This will be unnecessary when Go 1.12 lands.
+env:
+  - GO111MODULE=on
+
 branches:
   only:
     - master
@@ -15,22 +23,14 @@ branches:
 git:
   depth: 1
 
-install:
-  - go get -u github.com/golang/dep/...
-  - dep ensure
-
 # Don't email me the results of the test runs.
 notifications:
   email: false
 
 # Anything in before_script that returns a nonzero exit code will flunk the
 # build and immediately stop. It's sorta like having set -e enabled in bash.
-# Make sure golangci-lint is vendored by running
-#   dep ensure -add github.com/golangci/golangci-lint/cmd/golangci-lint
-# ...and adding this to your Gopkg.toml file.
-#   required = ["github.com/golangci/golangci-lint/cmd/golangci-lint"]
 before_script:
-  - go install ./vendor/github.com/golangci/golangci-lint/cmd/golangci-lint
+  - go install github.com/golangci/golangci-lint/cmd/golangci-lint
 
 # script always runs to completion (set +e). If we have linter issues AND a
 # failing test, we want to see both. Configure golangci-lint with a
