@@ -1,0 +1,65 @@
+module github.com/yhkaplan/gull
+
+require (
+	github.com/OpenPeeDeeP/depguard v0.0.0-20180806142446-a69c782687b2
+	github.com/fatih/color v1.7.0
+	github.com/fsnotify/fsnotify v1.4.7
+	github.com/gobwas/glob v0.2.3
+	github.com/gogo/protobuf v1.1.1
+	github.com/golang/mock v1.1.1
+	github.com/golangci/check v0.0.0-20180506172741-cfe4005ccda2
+	github.com/golangci/dupl v0.0.0-20180902072040-3e9179ac440a
+	github.com/golangci/errcheck v0.0.0-20180902071612-f726ab79eeeb
+	github.com/golangci/go-misc v0.0.0-20180628070357-927a3d87b613
+	github.com/golangci/go-tools v0.0.0-20180902103155-93eecd106a0b
+	github.com/golangci/goconst v0.0.0-20180610141641-041c5f2b40f3
+	github.com/golangci/gocyclo v0.0.0-20180528144436-0a533e8fa43d
+	github.com/golangci/gofmt v0.0.0-20180506063654-2076e05ced53
+	github.com/golangci/golangci-lint v1.10.2
+	github.com/golangci/gosec v0.0.0-20180901114220-8afd9cbb6cfb
+	github.com/golangci/govet v0.0.0-20180818181408-44ddbe260190
+	github.com/golangci/ineffassign v0.0.0-20180808204949-2ee8f2867dde
+	github.com/golangci/interfacer v0.0.0-20180902080945-01958817a6ec
+	github.com/golangci/lint v0.0.0-20180902080404-c2187e7932b5
+	github.com/golangci/lint-1 v0.0.0-20180610141402-4bf9709227d1
+	github.com/golangci/maligned v0.0.0-20180506175553-b1d89398deca
+	github.com/golangci/misspell v0.3.4
+	github.com/golangci/prealloc v0.0.0-20180630174525-215b22d4de21
+	github.com/golangci/revgrep v0.0.0-20180812185044-276a5c0a1039
+	github.com/golangci/tools v0.0.0-20180902102414-98e75f53b4b9
+	github.com/golangci/unconvert v0.0.0-20180507085042-28b1c447d1f4
+	github.com/golangci/unparam v0.0.0-20180902115109-7ad9dbcccc16
+	github.com/google/go-github v17.0.0+incompatible
+	github.com/google/go-querystring v1.0.0 // indirect
+	github.com/hashicorp/hcl v1.0.0
+	github.com/inconshreveable/mousetrap v1.0.0
+	github.com/jroimartin/gocui v0.4.0
+	github.com/kisielk/gotool v1.0.0
+	github.com/konsorten/go-windows-terminal-sequences v0.0.0-20180402223658-b729f2633dfe
+	github.com/magiconair/properties v1.8.0
+	github.com/mattn/go-colorable v0.0.9
+	github.com/mattn/go-isatty v0.0.4
+	github.com/mattn/go-runewidth v0.0.4 // indirect
+	github.com/mitchellh/mapstructure v1.0.0
+	github.com/nbutton23/zxcvbn-go v0.0.0-20171102151520-eafdab6b0663
+	github.com/nsf/termbox-go v0.0.0-20181027232701-60ab7e3d12ed // indirect
+	github.com/pelletier/go-toml v1.2.0
+	github.com/pkg/errors v0.8.0
+	github.com/sirupsen/logrus v1.1.0
+	github.com/spf13/afero v1.1.2
+	github.com/spf13/cast v1.2.0
+	github.com/spf13/cobra v0.0.3
+	github.com/spf13/jwalterweatherman v1.0.0
+	github.com/spf13/pflag v1.0.2
+	github.com/spf13/viper v1.2.0
+	github.com/urfave/cli v1.20.0
+	golang.org/x/crypto v0.0.0-20180910181607-0e37d006457b
+	golang.org/x/net v0.0.0-20180926154720-4dfa2610cdf3
+	golang.org/x/oauth2 v0.0.0-20181203162652-d668ce993890
+	golang.org/x/sys v0.0.0-20180926160741-c2ed4eda69e7
+	golang.org/x/text v0.3.0
+	golang.org/x/tools v0.0.0-20180927044812-b14f328a6211
+	gopkg.in/yaml.v2 v2.2.1
+	sourcegraph.com/sourcegraph/go-diff v0.0.0-20171119081133-3f415a150aec
+	sourcegraph.com/sqs/pbtypes v0.0.0-20180604144634-d3ebe8f20ae4
+)
